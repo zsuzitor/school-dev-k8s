@@ -71,17 +71,17 @@ spec:
               - key: enabled_plugins
                 path: enabled_plugins
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
+        podAntiAffinity: #эта конструкция позволит размазать все поды по разным нодам по возможности
+          preferredDuringSchedulingIgnoredDuringExecution: #правило не обязательное(preferred) и оно реверснутое(ignored)
+            - weight: 100 #вес\важность правила
               podAffinityTerm:
-                labelSelector:
+                labelSelector: #выберет поды с лейблом app:rabbitmq
                   matchExpressions:
                     - key: app
                       operator: In
                       values:
                         - rabbitmq
-                topologyKey: kubernetes.io/hostname
+                topologyKey: kubernetes.io/hostname #тк правило выберет поды, эта штука позволит взять их ноды(подов)
   volumeClaimTemplates:
     - metadata:
         name: data

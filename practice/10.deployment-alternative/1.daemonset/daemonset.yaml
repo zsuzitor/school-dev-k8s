@@ -1,3 +1,4 @@
+#запускает по 1 поду на каждой ноде кластера
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -30,10 +31,14 @@ spec:
             cpu: 10m
             memory: 64Mi
       nodeSelector:
-        kubernetes.io/os: linux
+        kubernetes.io/os: linux # поды будут создаваться на узлах с этой меткой
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
+      #tolerations - это сопротивляемость к "болезни"(taints) на ноде
+      #тоесть если на ноде есть <болезнь1> то на ней не будут размещаться поды у которых нет толерантности к <болезнь1>
       tolerations:
       - effect: NoSchedule
         key: node-role.kubernetes.io/ingress
+      # - effect: NoSchedule
+      #   operator: Exists #делаем tolerations на любой taint с указанным эффектом

@@ -1,3 +1,5 @@
+#если что то пролагает и ждоба не выполнится 100 раз по заданному schedule то она будет считаться поломанной, есть исключения с startingdeadlineseconds
+#джоб не изменяемый, каждый раз надо пересоздавать
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -5,11 +7,12 @@ metadata:
   name: hello
 spec:
   schedule: "*/1 * * * *"
-  concurrencyPolicy: Allow
+  startingdeadlineseconds: 20 #указывает насколько джоба может опоздать, указывать всегда больше 10 сек но меньше чем итерация в schedule
+  concurrencyPolicy: Forbid #запрещаем параллельный запуск, тоесть если продыдущая джоба не завершено, новой не будет
   jobTemplate:
     spec:
-      backoffLimit: 2
-      activeDeadlineSeconds: 100
+      backoffLimit: 2 #количество неудачных попыток запуска пода с джобой
+      activeDeadlineSeconds: 100 #если не выполнится за столько сек то под убивают, задача считается не выполненной
       template:
         spec:
           containers:
@@ -19,4 +22,4 @@ spec:
             - /bin/sh
             - -c
             - date; echo Hello from the Kubernetes cluster
-          restartPolicy: Never
+          restartPolicy: Never # политика рестарта контейнера(не пода), тоесть если что то сломается то будет перезапуск пода а не контейнера

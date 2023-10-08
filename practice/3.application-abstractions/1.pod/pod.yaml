@@ -1,13 +1,19 @@
+#обертка над контейнером, может содержать несколько контейнеров если они должны быть сильносвязанны
 ---
-# file: practice/2.application-abstractions/1.pod/pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: my-pod
+  name: nginx #название пода
 spec:
   containers:
-  - image: quay.io/testing-farm/nginx:1.12
-    name: nginx
-    ports:
+  - name: nginx #название контейнера в поде
+    image: nginx:1.14.2
+    ports: #в случае пода по сути ничего не делает(почти)
     - containerPort: 80
+#  создаем 2й контейнер если надо
+# - name: nginx
+#   image: nginx:1.14.2
+#   ports:
+#   - containerPort: 80
+
 ...

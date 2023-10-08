@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-{{ .Release.Name }}
+  name: {{ .Chart.Name }}-{{ .Release.Name }} #name берется из chart.yaml, release из команды выполнения в консоли
   labels:
     app: {{ .Chart.Name }}-{{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{ if .Values.annotations }}
+{{- if .Values.annotations }} #проверяем что значение задано, тут минусы в начале что бы в итоговом ямле не было пустых строк
   annotations:
-{{ toYaml .Values.annotations | indent 4 }}
-{{ end -}}
+{{ toYaml .Values.annotations | indent 4 }} #indent добавил 4 пробела, toYaml- прям вырвет кусок кода из values.yaml
+{{- end }}
 spec:
-  replicas: {{ .Values.replicas | default 2 }}
+  replicas: {{ .Values.replicas | default 2 }} #default - значение по умолчанию
   selector:
     matchLabels:
       app: {{ .Chart.Name }}-{{ .Release.Name }}
@@ -26,8 +26,8 @@ spec:
         - containerPort: {{ .Values.port }}
 {{ if .Values.env }}
         env:
-        {{- range $key, $val := .Values.env }}
-        - name: {{ $key | quote }}
+        {{- range $key, $val := .Values.env }} #перебираем определенный список в values и делаем их негодругой формат списка
+        - name: {{ $key | quote }} #quote - добавит кавычки но только там где их нет
           value: {{ $val | quote }}
         {{- end }}
 {{ end }}

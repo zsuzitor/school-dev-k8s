@@ -17,6 +17,19 @@ spec:
       containers:
       - image: quay.io/testing-farm/nginx:1.12
         name: nginx
+        env:
+        - name: TEST
+          value: foo
+        envFrom: # указываем конфиг мап
+        - configMapRef:
+            name: my-configmap-env
         ports:
         - containerPort: 80
+        # resources: #очень желательно
+        #   requests: #сколько как мы ожидаем(может вылезти) будет использовать, нужно для раскидывания подов по нодам
+        #     cpu: 10m
+        #     memory: 100Mi
+        #   limits: #если полезет выше, перезапустит контейнер
+        #     cpu: 100m
+        #     memory: 100Mi
 ...
